@@ -1,4 +1,4 @@
-# HACKATON-Stat.-Learning
+# HACKATON-Stat.-Learning: LHC ALERT LEVELS DETECTION
 Hackaton Kaggle competitions of Statistical Learning course, University La Sapienza, Rome (IT).
 
 ## Brief description of the task
