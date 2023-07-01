@@ -6,10 +6,11 @@ Hackaton Kaggle competitions of Statistical Learning course, University La Sapie
 
 # Model selection
 
-
+# Results and short considerations
 
 # Used technologies
-Python NumPy Plotly Pandas scikit-learn PyTorch...........
+![repo](https://github.com/giuseppedipoce/HACKATON-Stat.-Learning-/assets/114066138/a09d2bfa-4348-4286-8a1a-538f3d9ab5f5)
+
 
 
 
