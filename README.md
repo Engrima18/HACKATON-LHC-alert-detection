@@ -14,7 +14,7 @@ Hackaton Kaggle competitions of Statistical Learning course, University La Sapie
 
 
 
-Contributors: 
+Team ("🍫I Cioccolatosi🍫"): 
 - Enrico Grimaldi
 - Giuseppe Di Poce
 - Davide Vigneri
