@@ -4,17 +4,17 @@ Hackaton Kaggle competitions of Statistical Learning course, University La Sapie
 ## Brief description of the task
 
 
-# Model selection
+## Model selection
 
-# Results and short considerations
+## Results and short considerations
 
-# Used technologies
+## Used technologies
 ![repo](https://github.com/giuseppedipoce/HACKATON-Stat.-Learning-/assets/114066138/a09d2bfa-4348-4286-8a1a-538f3d9ab5f5)
 
 
 
 
-Team ("🍫I Cioccolatosi🍫"): 
+### Team ("🍫I Cioccolatosi🍫"): 
 - Enrico Grimaldi
 - Giuseppe Di Poce
 - Davide Vigneri
