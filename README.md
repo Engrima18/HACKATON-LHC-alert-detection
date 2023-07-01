@@ -1,5 +1,6 @@
-# HACKATON-Stat.-Learning: *LHC ALERT LEVELS DETECTION*
+# HACKATON: *LHC ALERT LEVELS DETECTION*
 Hackaton Kaggle competitions of Statistical Learning course, University La Sapienza, Rome (IT).
+The competitons lasted 48 hours and saw 15 teams of students from Scienze Statistiche, data science and statistical methods for data science degree courses compete against each other.
 
 ## Brief description of the task
 
