@@ -2,7 +2,8 @@
 Hackaton Kaggle competitions of Statistical Learning course, University La Sapienza, Rome (IT).\
 The competitons lasted 48 hours and saw 15 teams of students from Scienze Statistiche, data science and statistical methods for data science degree courses compete against each other.
 
- ![lhc](https://github.com/giuseppedipoce/HACKATON-LHC-alert-detection/assets/114066138/a009f05f-cbbd-4b7a-9858-0d2ad59706d3)
+![ECF16231-D400-4131-A5D7-90D10F92F9A9-1024x614](https://github.com/giuseppedipoce/HACKATON-LHC-alert-detection/assets/114066138/5172a233-c443-4b9e-aef2-a226e3c55276)
+
 
 
 ## Brief description of the task
@@ -40,5 +41,5 @@ The strong imbalance of input data made this hackathon a very compelling challen
 ### Team ("🍫I Cioccolatosi🍫"): 
 - Enrico Grimaldi (https://www.linkedin.com/in/enrico-grimaldi18/?originalSubdomain=it)
 - Giuseppe Di Poce (https://www.linkedin.com/in/giuseppe-di-poce-82a4ba14a/)
-- Davide Vigneri
+- Davide Vigneri ( 
 - Nicola Grieco (https://www.linkedin.com/in/nicola-grieco-36a993233/)
