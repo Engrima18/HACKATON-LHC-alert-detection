@@ -39,7 +39,7 @@ The strong imbalance of input data made this hackathon a very compelling challen
 
 
 ### Team ("🍫I Cioccolatosi🍫"): 
-- Enrico Grimaldi ([Linkedin](https://www.linkedin.com/in/enrico-grimaldi18/))
-- Giuseppe Di Poce ([Linkedin](https://www.linkedin.com/in/giuseppe-di-poce-82a4ba14a/))
-- Davide Vigneri ([Linkedin](https://www.linkedin.com/in/davide-vigneri-59a56021a/))
-- Nicola Grieco ([Linkedin](https://www.linkedin.com/in/nicola-grieco-36a993233/))
+- Enrico Grimaldi ([Linkedin](https://www.linkedin.com/in/enrico-grimaldi18/) - [Github](https://github.com/Engrima18))
+- Giuseppe Di Poce ([Linkedin](https://www.linkedin.com/in/giuseppe-di-poce-82a4ba14a/) - [Github](https://github.com/)
+- Davide Vigneri ([Linkedin](https://www.linkedin.com/in/davide-vigneri-59a56021a/) - [Github](https://github.com/giuseppedipoce)
+- Nicola Grieco ([Linkedin](https://www.linkedin.com/in/nicola-grieco-36a993233/) - [Github](https://github.com/nicolagrieco00)
