@@ -1,16 +1,35 @@
 # HACKATON: *LHC ALERT LEVELS DETECTION*
 Hackaton Kaggle competitions of Statistical Learning course, University La Sapienza, Rome (IT).\
-The competitons lasted 48 hours and saw 15 teams of students from Scienze Statistiche, data science and statistical methods for data science degree courses compete against each other.\
+The competitons lasted 48 hours and saw 15 teams of students from Scienze Statistiche, data science and statistical methods for data science degree courses compete against each other.
 
  ![lhc](https://github.com/giuseppedipoce/HACKATON-LHC-alert-detection/assets/114066138/a009f05f-cbbd-4b7a-9858-0d2ad59706d3)
 
 
 ## Brief description of the task
 
+Briefly speaking the task assigned during this hackathon was to correctly classify three alert levels 
+(target variable) in the high-frequency work of compressors located inside the particle accelerator (LHC) at CERN,Geneva.
+The dataset shows a very strong imbalance in the target
+alert level 3, which is the most important (and difficult) to classify.
+The data are presented in the form of time series, informed by 
+time period of detection of the compressors and the location
+in which it is located within the accelerator.\
+
 
 ## Model selection
 
-## Results and short considerations
+Our team developed, in the light of the data handled
+an adequate and informative feature extraction by transforming 
+the time series with a *Fourier transform*. The magnitude peaks extracted 
+from the transformations will represent our most informative features, 
+taking into account especially those detected at *low compressor frequencies*, as well as one versus all correlations and autocorrelations. 
+and autocorrelations. After over and undersampling we implement a logistic
+regression with selected best parameters in cross validation. Note that we implelemented a *model agnostic permutations
+feature importance* in order to filter the most importart variables and reduce the dimensionality of our data. 
+
+## Short considerations about the results
+
+The strong imbalance of input data made this hackathon a very compelling challenge indeed. We can say that the low frequencies of the power spectrum are very informative for the purpose of aler detection, however in order to improve our models we could try to eliminate the oversampling part and work better on the regression logistics weights
 
 ## Used technologies
 ![repo](https://github.com/giuseppedipoce/HACKATON-Stat.-Learning-/assets/114066138/a09d2bfa-4348-4286-8a1a-538f3d9ab5f5)
@@ -19,7 +38,7 @@ The competitons lasted 48 hours and saw 15 teams of students from Scienze Statis
 
 
 ### Team ("🍫I Cioccolatosi🍫"): 
-- Enrico Grimaldi
-- Giuseppe Di Poce
+- Enrico Grimaldi (https://www.linkedin.com/in/enrico-grimaldi18/?originalSubdomain=it)
+- Giuseppe Di Poce (https://www.linkedin.com/in/giuseppe-di-poce-82a4ba14a/)
 - Davide Vigneri
-- Nicola Grieco 
+- Nicola Grieco (https://www.linkedin.com/in/nicola-grieco-36a993233/)
