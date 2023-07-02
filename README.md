@@ -41,5 +41,5 @@ The strong imbalance of input data made this hackathon a very compelling challen
 ### Team ("🍫I Cioccolatosi🍫"): 
 - Enrico Grimaldi (https://www.linkedin.com/in/enrico-grimaldi18/?originalSubdomain=it)
 - Giuseppe Di Poce (https://www.linkedin.com/in/giuseppe-di-poce-82a4ba14a/)
-- Davide Vigneri ( 
+- Davide Vigneri (https://www.linkedin.com/in/davide-vigneri-59a56021a/)
 - Nicola Grieco (https://www.linkedin.com/in/nicola-grieco-36a993233/)
