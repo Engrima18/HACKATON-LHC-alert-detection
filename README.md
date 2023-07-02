@@ -14,7 +14,7 @@ The dataset shows a very strong imbalance in the target
 alert level 3, which is the most important (and difficult) to classify.
 The data are presented in the form of time series, informed by 
 time period of detection of the compressors and the location
-in which it is located within the accelerator.\
+in which it is located within the accelerator.
 
 
 ## Model selection
