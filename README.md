@@ -1,6 +1,8 @@
 # HACKATON: *LHC ALERT LEVELS DETECTION*
 Hackaton Kaggle competitions of Statistical Learning course, University La Sapienza, Rome (IT).\
-The competitons lasted 48 hours and saw 15 teams of students from Scienze Statistiche, data science and statistical methods for data science degree courses compete against each other.
+The competitons lasted 48 hours and saw 15 teams of students from Scienze Statistiche, data science and statistical methods for data science degree courses compete against each other.\
+![lhcpicture](https://github.com/giuseppedipoce/HACKATON-LHC-alert-detection/assets/114066138/7da86ff5-8b66-4564-8288-42313259f3aa)
+
 
 ## Brief description of the task
 
