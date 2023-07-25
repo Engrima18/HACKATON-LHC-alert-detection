@@ -28,8 +28,10 @@ and autocorrelations.
 
 Upload the image           |     Search the most similar bacterias     | Analyze the specs
 :-------------------------:|:-------------------------: |:-------------------------:
+<img width="512" alt="3" src="https://github.com/giuseppedipoce/HACKATON-LHC-alert-detection/assets/93355495/46b9aa2c-2e85-415f-9905-62d3197600d6"> |
+<img width="535" alt="1" src="https://github.com/giuseppedipoce/HACKATON-LHC-alert-detection/assets/93355495/2338924e-a32c-4f40-81d7-edbe81894367"> |
+<img width="535" alt="2" src="https://github.com/giuseppedipoce/HACKATON-LHC-alert-detection/assets/93355495/dfd1ca77-4e4c-4db5-813b-8fa66fd753e7">
 
- ![1](https://github.com/giuseppedipoce/HACKATON-LHC-alert-detection/assets/93355495/8d2cc94b-3cdb-4986-a55f-3bb749e648db) | ![2](https://github.com/giuseppedipoce/HACKATON-LHC-alert-detection/assets/93355495/3f461832-4597-4274-9656-ef29aa8ff820) | ![3](https://github.com/giuseppedipoce/HACKATON-LHC-alert-detection/assets/93355495/8d1edabc-f1e7-4f00-8bd2-6fae44c81aec)
 After over and undersampling we implement a logistic
 regression with selected best parameters in cross validation. Note that we implelemented a *model agnostic permutations
 feature importance* in order to filter the most importart variables and reduce the dimensionality of our data. 
