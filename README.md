@@ -26,7 +26,7 @@ from the transformations will represent our most informative features,
 taking into account especially those detected at *low compressor frequencies*, as well as one versus all correlations and autocorrelations. 
 and autocorrelations. 
 
-Upload the image           |     Search the most similar bacterias     | Analyze the specs
+ |       |        
 :-------------------------:|:-------------------------: |:-------------------------:
 <img src="https://github.com/giuseppedipoce/HACKATON-LHC-alert-detection/assets/93355495/2338924e-a32c-4f40-81d7-edbe81894367"> | <img src="https://github.com/giuseppedipoce/HACKATON-LHC-alert-detection/assets/93355495/dfd1ca77-4e4c-4db5-813b-8fa66fd753e7"> | <img src="https://github.com/giuseppedipoce/HACKATON-LHC-alert-detection/assets/93355495/46b9aa2c-2e85-415f-9905-62d3197600d6">
 
