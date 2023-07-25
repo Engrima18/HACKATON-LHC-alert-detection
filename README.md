@@ -17,7 +17,7 @@ time period of detection of the compressors and the location
 in which it is located within the accelerator.
 
 
-## Model selection
+## Features extraction and model selection
 
 Our team developed, in the light of the data handled
 an adequate and informative feature extraction by transforming 
