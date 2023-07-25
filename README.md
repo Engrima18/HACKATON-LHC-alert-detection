@@ -24,7 +24,13 @@ an adequate and informative feature extraction by transforming
 the time series with a *Fourier transform*. The magnitude peaks extracted 
 from the transformations will represent our most informative features, 
 taking into account especially those detected at *low compressor frequencies*, as well as one versus all correlations and autocorrelations. 
-and autocorrelations. After over and undersampling we implement a logistic
+and autocorrelations. 
+
+Upload the image           |     Search the most similar bacterias     | Analyze the specs
+:-------------------------:|:-------------------------: |:-------------------------:
+
+ ![1](https://github.com/giuseppedipoce/HACKATON-LHC-alert-detection/assets/93355495/8d2cc94b-3cdb-4986-a55f-3bb749e648db) | ![2](https://github.com/giuseppedipoce/HACKATON-LHC-alert-detection/assets/93355495/3f461832-4597-4274-9656-ef29aa8ff820) | ![3](https://github.com/giuseppedipoce/HACKATON-LHC-alert-detection/assets/93355495/8d1edabc-f1e7-4f00-8bd2-6fae44c81aec)
+After over and undersampling we implement a logistic
 regression with selected best parameters in cross validation. Note that we implelemented a *model agnostic permutations
 feature importance* in order to filter the most importart variables and reduce the dimensionality of our data. 
 
