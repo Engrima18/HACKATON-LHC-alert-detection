@@ -47,10 +47,10 @@ The strong imbalance of input data made this hackathon a very compelling challen
 
 ## Content
 
-`Hackathon.ipynb`: final notebook with the EDA and the final results obtained through our feature extraction and models;
-`corr4hacka.rmd`: script (Rmarkdown) to derive correlations between timeseries;
-
-`nice_plots.py`: functions for nice plots;
+- `Hackathon.ipynb`: final notebook with the EDA and the final results obtained through our feature extraction and models;
+- `corr4hacka.rmd`: script (Rmarkdown) to derive correlations between timeseries;
+- `feature_extraction.py`: functions to extract interesting features from timeseries:
+- `nice_plots.py`: functions for nice plots.
 
 
 ### Team ("🍫I Cioccolatosi🍫"): 
