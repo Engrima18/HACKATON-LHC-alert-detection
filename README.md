@@ -45,6 +45,13 @@ The strong imbalance of input data made this hackathon a very compelling challen
 ![Pandas](https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-%23F7931E.svg?style=for-the-badge&logo=scikit-learn&logoColor=white)
 
+## Content
+
+`Hackathon.ipynb`: final notebook with the EDA and the final results obtained through our feature extraction and models;
+`corr4hacka.rmd`: script (Rmarkdown) to derive correlations between timeseries;
+
+`nice_plots.py`: functions for nice plots;
+
 
 ### Team ("🍫I Cioccolatosi🍫"): 
 - Enrico Grimaldi ([Linkedin](https://www.linkedin.com/in/enrico-grimaldi18/) - [Github](https://github.com/Engrima18))
