@@ -1,0 +1,702 @@
+---
+title: "hacka"
+output: html_document
+date: "2023-06-30"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+## required libraries
+library(data.table)
+library(readr)
+library(tidyverse)
+library(forecast)
+library(e1071)
+library(glmnet)
+library(moments)
+library(boot)
+library(caret)
+library(tseries)
+library(randomForest)
+library(igraph)
+library(ggraph)
+```
+
+
+
+```{r}
+df <- fread("train.csv")
+```
+
+
+```{r}
+test_df <- fread("test.csv")
+```
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+df <- as_tibble(df)
+```
+
+
+```{r}
+test_df <- as_tibble(test_df)
+```
+
+
+
+```{r}
+
+f <- function(x)(substr(x,0,3))
+
+## unique name of rois
+codes <- unique(sapply(colnames(df[,6:ncol(df)]), FUN = f))
+
+other_f <- function(x)(paste0("X",x))
+
+codes2 <- as.vector(sapply(codes,FUN = other_f))
+
+
+low <- data.frame(matrix(NA, nrow= (table(df$y)[1]*2048), ncol = length(codes)))
+
+for (i in 1:length(codes)){
+  low[,i] <- as.vector(t(select(df[df$y == 1,6:ncol(df)], contains(codes[i]))))
+}
+
+colnames(low) <- codes2
+
+
+
+medium <- data.frame(matrix(NA, nrow= (table(df$y)[2]*2048), ncol = length(codes)))
+
+for (i in 1:length(codes)){
+  medium[,i] <- as.vector(t(select(df[df$y == 2,6:ncol(df)], contains(codes[i]))))
+}
+
+colnames(medium) <- codes2
+
+high <- data.frame(matrix(NA, nrow= (table(df$y)[3]*2048), ncol = length(codes)))
+
+for (i in 1:length(codes)){
+  high[,i] <- as.vector(t(select(df[df$y == 3,6:ncol(df)], contains(codes[i]))))
+}
+
+colnames(high) <- codes2
+
+```
+
+```{r}
+## dataset medium and high together
+medium_high <- data.frame(matrix(NA, nrow= (table(df$y)[2]*2048+table(df$y)[3]*2048), ncol = length(codes)))
+
+for (i in 1:length(codes)){
+  medium_high[,i] <- as.vector(t(select(df[df$y == 2 | df$y == 3 ,6:ncol(df)], contains(codes[i]))))
+}
+
+colnames(medium_high) <- codes2
+
+## dataset low and medium together
+low_medium <- data.frame(matrix(NA, nrow= (table(df$y)[1]*2048+table(df$y)[2]*2048), ncol = length(codes)))
+
+for (i in 1:length(codes)){
+  low_medium[,i] <- as.vector(t(select(df[df$y == 1 | df$y == 2 ,6:ncol(df)], contains(codes[i]))))
+}
+
+colnames(low_medium) <- codes2
+
+
+## dataset low and high together
+low_high <- data.frame(matrix(NA, nrow= (table(df$y)[1]*2048+table(df$y)[3]*2048), ncol = length(codes)))
+
+for (i in 1:length(codes)){
+  low_high[,i] <- as.vector(t(select(df[df$y == 1 | df$y == 3 ,6:ncol(df)], contains(codes[i]))))
+}
+
+colnames(low_high) <- codes2
+
+
+
+```
+
+
+
+
+```{r}
+ro_low <-data.frame(cor(low))
+ro_medium <-data.frame(cor(medium))
+ro_high <-data.frame(cor(high))
+```
+
+
+```{r}
+cor.test.p2 <- function(x,bound){
+    FUN <- function(j, k) cor.test(j, k, method = "pearson", conf.level =  1-(0.05/choose(24,2)))$conf.int[bound]
+    z <- outer(
+      colnames(x), 
+      colnames(x), 
+      Vectorize(function(j,k) FUN(x[,j], x[,k]))
+    )
+    dimnames(z) <- list(colnames(x), colnames(x))
+    z
+}
+
+```
+
+
+```{r}
+LB_low <- cor.test.p2(low, 1)
+UB_low <- cor.test.p2(low, 2)
+```
+
+
+
+
+```{r}
+create_adj <- function(LB,UB,t){
+  m <- matrix(0, nrow = nrow(LB), ncol = ncol(LB))
+  m[(-t > UB) | (t < LB)] <- 1
+  diag(m) <- 0 
+  colnames(m) <- colnames(LB)
+  rownames(m) <- rownames(LB)
+  return(m)
+}
+```
+
+```{r}
+adj_low <- create_adj(LB_low, UB_low,0.20)
+
+```
+
+```{r}
+g_difft<- graph_from_adjacency_matrix(adj_low, mode = "undirected", diag = FALSE)
+edges <- E(g_difft)
+```
+
+
+
+```{r}
+## cor differences with low
+ro_medium_high <- data.frame(cor(medium_high))
+
+diff_low <- ro_low - ro_medium_high
+```
+
+```{r}
+compute_CI_diff2 <- function(ro, n){
+  z <- atanh((ro)/2)    
+  sigma <- 1 / sqrt(n-3)
+  lower <- z - sigma * qnorm((1-(0.05/choose(24,2))/2))
+  upper <- z + sigma * qnorm(1-(0.05/choose(24,2))/2)
+  lower <- tanh(lower)*2
+  upper <- tanh(upper)*2
+  return(list(lower,upper))
+}
+```
+
+
+```{r}
+ogg_low <- compute_CI_diff2(diff_low, nrow(low))
+```
+
+```{r}
+lower_diff_low <- ogg_low[[1]]
+upper_diff_low <- ogg_low[[2]]
+```
+
+```{r}
+adj_diff_low <- create_adj(lower_diff_low,upper_diff_low, 0.1)
+```
+
+```{r}
+g_difft_low<- graph_from_adjacency_matrix(adj_diff_low, mode = "undirected", diag = FALSE)
+edges_diff_low <- E(g_difft_low)
+```
+
+
+```{r}
+ggraph(g_difft_low, layout = 'fr') +
+  geom_edge_link(colour = "salmon", edge_width = 1.2) + 
+  geom_node_point() + 
+  geom_node_text(aes(label = name), repel = TRUE, max.overlaps = 20) +
+  theme_void() +
+  theme(legend.position = "none", plot.title=element_text(hjust=0.5)) +
+  ggtitle("Difference graph ( t = 0.1 ) \n")
+```
+
+
+```{r}
+## cor differences with high
+ro_low_medium <- data.frame(cor(low_medium))
+
+diff_high<- ro_high - ro_low_medium
+```
+
+
+
+```{r}
+ogg_high <- compute_CI_diff2(diff_high, nrow(high))
+```
+
+```{r}
+lower_diff_high <- ogg_high[[1]]
+upper_diff_high <- ogg_high[[2]]
+```
+
+```{r}
+adj_diff_high <- create_adj(lower_diff_high,upper_diff_high, 0.1)
+```
+
+```{r}
+g_difft_high<- graph_from_adjacency_matrix(adj_diff_high, mode = "undirected", diag = FALSE)
+edges_diff_high <- E(g_difft_high)
+```
+
+
+```{r}
+ggraph(g_difft_high, layout = 'fr') +
+  geom_edge_link(colour = "blue", edge_width = 1.2) + 
+  geom_node_point() + 
+  geom_node_text(aes(label = name), repel = TRUE, max.overlaps = 20) +
+  theme_void() +
+  theme(legend.position = "none", plot.title=element_text(hjust=0.5)) +
+  ggtitle("Difference graph ( t = 0.15 ) \n")
+```
+
+
+```{r}
+## cor differences with medium
+ro_low_high <- data.frame(cor(low_high))
+
+diff_medium<- ro_medium - ro_low_high
+```
+
+
+
+```{r}
+ogg_medium <- compute_CI_diff2(diff_medium, nrow(medium))
+```
+
+```{r}
+lower_diff_medium <- ogg_medium[[1]]
+upper_diff_medium <- ogg_medium[[2]]
+```
+
+```{r}
+adj_diff_medium <- create_adj(lower_diff_medium,upper_diff_medium, 0.1)
+```
+
+```{r}
+g_difft_medium<- graph_from_adjacency_matrix(adj_diff_medium, mode = "undirected", diag = FALSE)
+edges_diff_medium <- E(g_difft_medium)
+```
+
+
+```{r}
+ggraph(g_difft_medium, layout = 'fr') +
+  geom_edge_link(colour = "blue", edge_width = 1.2) + 
+  geom_node_point() + 
+  geom_node_text(aes(label = name), repel = TRUE, max.overlaps = 20) +
+  theme_void() +
+  theme(legend.position = "none", plot.title=element_text(hjust=0.5)) +
+  ggtitle("Difference graph ( t = 0.1 ) \n")
+```
+
+```{r}
+train <- df[,6:ncol(df)]
+```
+
+```{r}
+edges_diff_low
+```
+
+
+```{r}
+
+pairs_train2_low <- list(
+  var1 = c("E1A", "E1V"),
+  var2 = c("E1P","E4P"),
+  var3 = c("E1P","M2P"),
+  var4 = c("E2P","M1P"),
+  var5 = c("E3A","E3V"),
+  var6 = c("E4A","E4V"),
+  var7 = c("E4P","M1P"))
+
+```
+
+
+```{r}
+# Create an empty matrix to store the correlation values
+
+variables_train2_low <- matrix(NA, nrow(train), length(pairs_train2_low))
+
+# Iterate over each pair in pairs_train2_big
+for (i in 1:length(pairs_train2_low)) {
+  print(i)
+  # Define a function to calculate the correlation between two time series
+  calculate_correlation <- function(row) {
+    s1 <- ts(as.vector(t(row[grepl(as.character(pairs_train2_low[[i]][1]), colnames(train))])))
+    s2 <- ts(as.vector(t(row[grepl(as.character(pairs_train2_low[[i]][2]), colnames(train))])))
+    cor(s1, s2)
+  }
+  
+  # Apply the calculate_correlation function to each row of the train data
+  variables_train2_low[, i] <- apply(train, 1, calculate_correlation)
+}
+
+colnames(variables_train2_low) <- c('cor_E1A_E1V', 'cor_E1P_E4P', 'cor_E1P_M2P', 'cor_E2P_M1P', 'cor_E3A_E3V', 'cor_E4A_E4V', 'cor_E4P_M1P')
+
+variables_train2_low <- data.frame(variables_train2_low)
+
+```
+
+```{r}
+edges_diff_high
+```
+
+
+
+```{r}
+pairs_train2_high <- list(
+  var1 = c("E1A","E1V"),
+  var2 = c("E1P","E3P"),
+  var3 = c("E1P","E4P"),
+  var4 = c("E1P","M1P"),
+  var5 = c("E1P","M2P"),
+  var6 = c("E2P","E3P"),
+  var7 = c("E2P","M1P"),
+  var8 = c("E2P","M2P"),
+  var9 = c("E3A","E3V"),
+  var10 = c("E3P","E4P"),
+  var11 = c("E3P","M1P"),
+  var12 = c("E3P","M2P"),
+  var13 = c("E3V","E4A"),
+  var14 = c("E3V","E4V"),
+  var15 = c("E4A","E4H"),
+  var16 = c("E4A","E4V"),
+  var17 = c("E4P","M1P"),
+  var18 = c("E4P","M2P"),
+  var19 = c("M1A","M2A" ),
+  var20 = c("M1P","M2P"))
+
+
+# Create an empty matrix to store the correlation values
+
+variables_train2_high  <- matrix(NA, nrow(train), length(pairs_train2_high))
+
+# Iterate over each pair in pairs_train2_big
+for (i in 1:length(pairs_train2_high)) {
+  print(i)
+  # Define a function to calculate the correlation between two time series
+  calculate_correlation <- function(row) {
+    s1 <- ts(as.vector(t(row[grepl(as.character(pairs_train2_high[[i]][1]), colnames(train))])))
+    s2 <- ts(as.vector(t(row[grepl(as.character(pairs_train2_high[[i]][2]), colnames(train))])))
+    cor(s1, s2)
+  }
+  
+  # Apply the calculate_correlation function to each row of the train data
+  variables_train2_high[, i] <- apply(train, 1, calculate_correlation)
+}
+
+colnames(variables_train2_high) <- c(
+    'cor_E1A_E1V',
+    'cor_E1P_E3P',
+    'cor_E1P_E4P',
+    'cor_E1P_M1P',
+    'cor_E1P_M2P',
+    'cor_E2P_E3P',
+    'cor_E2P_M1P',
+    'cor_E2P_M2P',
+    'cor_E3A_E3V',
+    'cor_E3P_E4P',
+    'cor_E3P_M1P',
+    'cor_E3P_M2P',
+    'cor_E3V_E4A',
+    'cor_E3V_E4V',
+    'cor_E4A_E4H',
+    'cor_E4A_E4V',
+    'cor_E4P_M1P',
+    'cor_E4P_M2P',
+    'cor_M1A_M2A',
+    'cor_M1P_M2P')
+
+variables_train2_high <- data.frame(variables_train2_high)
+
+
+```
+
+
+
+```{r}
+edges_diff_medium
+```
+
+
+
+```{r}
+
+pairs_train2_medium <- list(
+  var1 = c("E1A","E1V"),
+  var2 = c("E1A","E2A"),
+  var3 = c("E1P","M2P"),
+  var4 = c("E2P","M1P"),
+  var5 = c("E3A","E3V"),
+  var6 = c("E4P","M1P"))
+
+
+# Create an empty matrix to store the correlation values
+
+variables_train2_medium <- matrix(NA, nrow(train), length(pairs_train2_medium))
+
+# Iterate over each pair in pairs_train2_big
+for (i in 1:length(pairs_train2_medium)) {
+  print(i)
+  # Define a function to calculate the correlation between two time series
+  calculate_correlation <- function(row) {
+    s1 <- ts(as.vector(t(row[grepl(as.character(pairs_train2_medium[[i]][1]), colnames(train))])))
+    s2 <- ts(as.vector(t(row[grepl(as.character(pairs_train2_medium[[i]][2]), colnames(train))])))
+    cor(s1, s2)
+  }
+  
+  # Apply the calculate_correlation function to each row of the train data
+  variables_train2_medium[, i] <- apply(train, 1, calculate_correlation)
+}
+
+
+colnames(variables_train2_medium) <- c(
+    'cor_E1A_E1V',
+    'cor_E1A_E2A',
+    'cor_E1P_M2P',
+    'cor_E2P_M1P',
+    'cor_E3A_E3V',
+    'cor_E4P_M1P'
+)
+
+variables_train2_medium <- data.frame(variables_train2_medium)
+
+```
+
+```{r}
+
+```
+
+
+```{r}
+a <- cbind(variables_train2_low, variables_train2_medium, variables_train2_high)
+```
+
+```{r}
+a_unique <- a[,unique(colnames(a))]
+```
+
+
+## on test
+
+
+
+```{r}
+test <- test_df[,5:ncol(test_df)]
+```
+
+```{r}
+edges_diff_low
+```
+
+
+```{r}
+
+pairs_test2_low <- list(
+  var1 = c("E1A", "E1V"),
+  var2 = c("E1P","E4P"),
+  var3 = c("E1P","M2P"),
+  var4 = c("E2P","M1P"),
+  var5 = c("E3A","E3V"),
+  var6 = c("E4A","E4V"),
+  var7 = c("E4P","M1P"))
+
+```
+
+
+```{r}
+# Create an empty matrix to store the correlation values
+
+variables_test2_low <- matrix(NA, nrow(test), length(pairs_test2_low))
+
+# Iterate over each pair in pairs_test2_big
+for (i in 1:length(pairs_test2_low)) {
+  print(i)
+  # Define a function to calculate the correlation between two time series
+  calculate_correlation <- function(row) {
+    s1 <- ts(as.vector(t(row[grepl(as.character(pairs_test2_low[[i]][1]), colnames(test))])))
+    s2 <- ts(as.vector(t(row[grepl(as.character(pairs_test2_low[[i]][2]), colnames(test))])))
+    cor(s1, s2)
+  }
+  
+  # Apply the calculate_correlation function to each row of the test data
+  variables_test2_low[, i] <- apply(test, 1, calculate_correlation)
+}
+
+colnames(variables_test2_low) <- c('cor_E1A_E1V', 'cor_E1P_E4P', 'cor_E1P_M2P', 'cor_E2P_M1P', 'cor_E3A_E3V', 'cor_E4A_E4V', 'cor_E4P_M1P')
+
+variables_test2_low <- data.frame(variables_test2_low)
+
+```
+
+```{r}
+edges_diff_high
+```
+
+
+
+```{r}
+pairs_test2_high <- list(
+  var1 = c("E1A","E1V"),
+  var2 = c("E1P","E3P"),
+  var3 = c("E1P","E4P"),
+  var4 = c("E1P","M1P"),
+  var5 = c("E1P","M2P"),
+  var6 = c("E2P","E3P"),
+  var7 = c("E2P","M1P"),
+  var8 = c("E2P","M2P"),
+  var9 = c("E3A","E3V"),
+  var10 = c("E3P","E4P"),
+  var11 = c("E3P","M1P"),
+  var12 = c("E3P","M2P"),
+  var13 = c("E3V","E4A"),
+  var14 = c("E3V","E4V"),
+  var15 = c("E4A","E4H"),
+  var16 = c("E4A","E4V"),
+  var17 = c("E4P","M1P"),
+  var18 = c("E4P","M2P"),
+  var19 = c("M1A","M2A" ),
+  var20 = c("M1P","M2P"))
+
+
+# Create an empty matrix to store the correlation values
+
+variables_test2_high  <- matrix(NA, nrow(test), length(pairs_test2_high))
+
+# Iterate over each pair in pairs_test2_big
+for (i in 1:length(pairs_test2_high)) {
+  print(i)
+  # Define a function to calculate the correlation between two time series
+  calculate_correlation <- function(row) {
+    s1 <- ts(as.vector(t(row[grepl(as.character(pairs_test2_high[[i]][1]), colnames(test))])))
+    s2 <- ts(as.vector(t(row[grepl(as.character(pairs_test2_high[[i]][2]), colnames(test))])))
+    cor(s1, s2)
+  }
+  
+  # Apply the calculate_correlation function to each row of the test data
+  variables_test2_high[, i] <- apply(test, 1, calculate_correlation)
+}
+
+colnames(variables_test2_high) <- c(
+    'cor_E1A_E1V',
+    'cor_E1P_E3P',
+    'cor_E1P_E4P',
+    'cor_E1P_M1P',
+    'cor_E1P_M2P',
+    'cor_E2P_E3P',
+    'cor_E2P_M1P',
+    'cor_E2P_M2P',
+    'cor_E3A_E3V',
+    'cor_E3P_E4P',
+    'cor_E3P_M1P',
+    'cor_E3P_M2P',
+    'cor_E3V_E4A',
+    'cor_E3V_E4V',
+    'cor_E4A_E4H',
+    'cor_E4A_E4V',
+    'cor_E4P_M1P',
+    'cor_E4P_M2P',
+    'cor_M1A_M2A',
+    'cor_M1P_M2P')
+
+variables_test2_high <- data.frame(variables_test2_high)
+
+
+```
+
+
+
+```{r}
+edges_diff_medium
+```
+
+
+
+```{r}
+
+pairs_test2_medium <- list(
+  var1 = c("E1A","E1V"),
+  var2 = c("E1A","E2A"),
+  var3 = c("E1P","M2P"),
+  var4 = c("E2P","M1P"),
+  var5 = c("E3A","E3V"),
+  var6 = c("E4P","M1P"))
+
+
+# Create an empty matrix to store the correlation values
+
+variables_test2_medium <- matrix(NA, nrow(test), length(pairs_test2_medium))
+
+# Iterate over each pair in pairs_test2_big
+for (i in 1:length(pairs_test2_medium)) {
+  print(i)
+  # Define a function to calculate the correlation between two time series
+  calculate_correlation <- function(row) {
+    s1 <- ts(as.vector(t(row[grepl(as.character(pairs_test2_medium[[i]][1]), colnames(test))])))
+    s2 <- ts(as.vector(t(row[grepl(as.character(pairs_test2_medium[[i]][2]), colnames(test))])))
+    cor(s1, s2)
+  }
+  
+  # Apply the calculate_correlation function to each row of the test data
+  variables_test2_medium[, i] <- apply(test, 1, calculate_correlation)
+}
+
+
+colnames(variables_test2_medium) <- c(
+    'cor_E1A_E1V',
+    'cor_E1A_E2A',
+    'cor_E1P_M2P',
+    'cor_E2P_M1P',
+    'cor_E3A_E3V',
+    'cor_E4P_M1P'
+)
+
+variables_test2_medium <- data.frame(variables_test2_medium)
+
+```
+
+```{r}
+b <- cbind(variables_test2_low, variables_test2_medium, variables_test2_high)
+```
+
+
+```{r}
+b_unique <- b[, unique(colnames(b))]
+```
+
+
+
+```{r}
+write.csv(a_unique, file = "train_a.csv", row.names = FALSE)
+write.csv(b_unique, file = "test_b.csv", row.names = FALSE)
+
+```
+
+
+
+
+
+
+
+
